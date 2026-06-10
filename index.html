@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MoneyLens AI</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>💰 MoneyLens AI</h1>
+
+    <p>
+        Smart Indian Currency Recognition Using AI
+    </p>
+
+    <button id="startBtn" onclick="init()">
+        Start Detection
+    </button>
+
+</header>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>📷 Live Camera Feed</h2>
+
+        <div id="loading">
+            Loading AI Model...
+        </div>
+
+        <div id="webcam-container"></div>
+
+    </div>
+
+    <div class="card result-card">
+
+        <h2>💵 Detection Result</h2>
+
+        <div id="currency">
+            Waiting...
+        </div>
+
+        <div class="confidence-bar">
+            <div id="progress"></div>
+        </div>
+
+        <div id="confidence">
+            0%
+        </div>
+
+        <div class="currency-info">
+
+            <p>
+                <strong>Value:</strong>
+                <span id="value">-</span>
+            </p>
+
+            <p>
+                <strong>Color:</strong>
+                <span id="color">-</span>
+            </p>
+
+            <p>
+                <strong>Issued By:</strong>
+                Reserve Bank of India
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+
+   💸 MoneyLens AI • Built with Teachable Machine & TensorFlow.js
+
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>

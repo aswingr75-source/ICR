@@ -1,0 +1,52 @@
+/* Money Heist theme: red & black with flowing money animation */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+	font-family:'Poppins',sans-serif;
+	background:linear-gradient(180deg,#1b0008 0%, #0b0406 60%);
+	color:#f7f7f7;
+	overflow-x:hidden;
+}
+
+/* Animated money flow container (banknotes falling) */
+#money-flow{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.banknote{
+	position:absolute;left:0;top:-10vh;z-index:0;color:rgba(255,255,255,0.9);
+	font-weight:800;font-size:22px;transform-origin:center;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+}
+@keyframes fall{
+	0%{transform:translateY(-10vh) rotateX(0) rotate(0);opacity:0}
+	10%{opacity:1}
+	100%{transform:translateY(120vh) rotateX(360deg) rotate(720deg);opacity:0}
+}
+
+/* Header */
+header{position:relative;z-index:2;padding:36px 20px;text-align:center}
+header h1{font-size:2.6rem;color:#ffdddd;text-shadow:0 4px 18px rgba(255,0,0,0.12)}
+header p{color:rgba(255,255,255,0.8);margin-top:8px}
+button{background:#b30000;border:none;padding:12px 26px;border-radius:10px;color:white;font-weight:700;cursor:pointer;box-shadow:0 10px 30px rgba(179,0,0,0.18)}
+button:hover{transform:translateY(-3px)}
+
+.container{width:92%;max-width:1200px;margin:28px auto;display:grid;grid-template-columns:1fr 1fr;gap:22px;z-index:2;position:relative}
+.card{background:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.6));border-radius:16px;padding:22px;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
+.card h2{color:#ffdede;margin-bottom:14px}
+
+#webcam-container{display:flex;justify-content:center;align-items:center}
+canvas{border-radius:14px;max-width:100%;box-shadow:0 0 40px rgba(179,0,0,0.12)}
+
+.result-card{text-align:center}
+#currency{font-size:68px;font-weight:800;color:#ffdddd;margin:18px 0}
+
+.confidence-bar{height:18px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;margin-top:12px}
+#progress{height:100%;width:0%;background:linear-gradient(90deg,#ff3b3b,#ff9933);transition:0.45s}
+#confidence{font-size:22px;margin-top:8px;color:rgba(255,255,255,0.95)}
+
+.currency-info{margin-top:20px;text-align:left}
+.currency-info p{padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+
+#loading{display:none;margin-bottom:14px;font-size:16px;color:rgba(255,255,255,0.9)}
+
+footer{position:relative;z-index:2;text-align:center;padding:18px;color:rgba(255,255,255,0.75)}
+
+/* Responsive */
+@media(max-width:900px){.container{grid-template-columns:1fr}.card{padding:16px}#currency{font-size:48px}header h1{font-size:1.8rem}}
