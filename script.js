@@ -1,167 +1,445 @@
+/* ==================================
+   MoneyLens AI - script.js
+   ================================== */
+
 const URL = "./model/";
 
 let model;
 let webcam;
+let historyData = [];
+let currentDetectedNote = "";
+
+/* ===========================
+   Currency Data
+   =========================== */
 
 const noteInfo = {
 
-"₹10":{
-value:"Ten Rupees",
-color:"Chocolate Brown"
-},
+    "₹10": {
+        value: 10,
+        words: "Ten Rupees",
+        color: "Chocolate Brown"
+    },
 
-"₹20":{
-value:"Twenty Rupees",
-color:"Greenish Yellow"
-},
+    "₹20": {
+        value: 20,
+        words: "Twenty Rupees",
+        color: "Greenish Yellow"
+    },
 
-"₹50":{
-value:"Fifty Rupees",
-color:"Fluorescent Blue"
-},
+    "₹50": {
+        value: 50,
+        words: "Fifty Rupees",
+        color: "Fluorescent Blue"
+    },
 
-"₹100":{
-value:"One Hundred Rupees",
-color:"Lavender"
-},
+    "₹100": {
+        value: 100,
+        words: "One Hundred Rupees",
+        color: "Lavender"
+    },
 
-"₹200":{
-value:"Two Hundred Rupees",
-color:"Bright orange"
-},
+    "₹200": {
+        value: 200,
+        words: "Two Hundred Rupees",
+        color: "Bright Orange"
+    },
 
-"₹500":{
-value:"Five Hundred Rupees",
-color:"Stone Grey"
-}
+    "₹500": {
+        value: 500,
+        words: "Five Hundred Rupees",
+        color: "Stone Grey"
+    }
 
 };
 
-async function init(){
+/* ===========================
+   Initialize AI
+   =========================== */
 
-document.getElementById("loading").style.display="block";
+async function init() {
 
-const modelURL = URL + "model.json";
-const metadataURL = URL + "metadata.json";
+    if (model) return;
 
-model = await tmImage.load(
-modelURL,
-metadataURL
-);
+    document.getElementById("loading").style.display = "block";
 
-webcam = new tmImage.Webcam(
-350,
-350,
-true
-);
+    try {
 
-await webcam.setup();
-await webcam.play();
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
 
-window.requestAnimationFrame(loop);
+        model = await tmImage.load(
+            modelURL,
+            metadataURL
+        );
 
-document.getElementById(
-"webcam-container"
-).innerHTML = "";
+        webcam = new tmImage.Webcam(
+            350,
+            350,
+            true
+        );
 
-document.getElementById(
-"webcam-container"
-).appendChild(
-webcam.canvas
-);
+        await webcam.setup();
+        await webcam.play();
 
-document.getElementById(
-"loading"
-).style.display="none";
+        document.getElementById(
+            "webcam-container"
+        ).innerHTML = "";
 
+        document.getElementById(
+            "webcam-container"
+        ).appendChild(
+            webcam.canvas
+        );
+
+        document.getElementById(
+            "loading"
+        ).style.display = "none";
+
+        window.requestAnimationFrame(loop);
+
+        detectDevice();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Failed to load AI model or camera."
+        );
+    }
 }
 
-async function loop(){
+/* ===========================
+   Detect Device Type
+   =========================== */
 
-webcam.update();
+function detectDevice() {
 
-await predict();
+    const isMobile =
+        /Android|iPhone|iPad|iPod/i
+        .test(navigator.userAgent);
 
-window.requestAnimationFrame(loop);
+    if (!isMobile) {
 
+        const selector =
+            document.getElementById(
+                "cameraSelect"
+            );
+
+        if (selector) {
+
+            selector.style.display = "none";
+        }
+    }
 }
 
-async function predict(){
+/* ===========================
+   Prediction Loop
+   =========================== */
 
-const prediction =
-await model.predict(
-webcam.canvas
-);
+async function loop() {
 
-let highest =
-prediction[0];
+    webcam.update();
 
-for(let i=1;i<prediction.length;i++){
+    await predict();
 
-if(
-prediction[i].probability >
-highest.probability
-){
-highest = prediction[i];
+    window.requestAnimationFrame(loop);
 }
 
+/* ===========================
+   Predict Currency
+   =========================== */
+
+async function predict() {
+
+    const prediction =
+        await model.predict(
+            webcam.canvas
+        );
+
+    let highest =
+        prediction[0];
+
+    for (
+        let i = 1;
+        i < prediction.length;
+        i++
+    ) {
+
+        if (
+            prediction[i].probability >
+            highest.probability
+        ) {
+
+            highest =
+                prediction[i];
+        }
+    }
+
+    const confidence =
+        (
+            highest.probability * 100
+        ).toFixed(2);
+
+    document.getElementById(
+        "confidence"
+    ).innerText =
+        confidence + "%";
+
+    document.getElementById(
+        "progress"
+    ).style.width =
+        confidence + "%";
+
+    /* Ignore weak detections */
+
+    if (
+        highest.probability < 0.75
+    ) {
+
+        document.getElementById(
+            "currency"
+        ).innerText =
+            "No Note Detected";
+
+        return;
+    }
+
+    currentDetectedNote =
+        highest.className;
+
+    document.getElementById(
+        "currency"
+    ).innerText =
+        highest.className;
+
+    const note =
+        noteInfo[
+            highest.className
+        ];
+
+    if (!note) return;
+
+    /* Currency Details */
+
+    document.getElementById(
+        "value"
+    ).innerText =
+        "₹" + note.value;
+
+    document.getElementById(
+        "words"
+    ).innerText =
+        note.words;
+
+    document.getElementById(
+        "color"
+    ).innerText =
+        note.color;
+
+    updateCurrencyConversion(
+        note.value
+    );
+
+    updateHistory(
+        highest.className
+    );
 }
 
-const confidence =
-(highest.probability*100)
-.toFixed(2);
+/* ===========================
+   Currency Conversion
+   =========================== */
 
-document.getElementById(
-"currency"
-).innerText =
-highest.className;
+function updateCurrencyConversion(
+    amount
+) {
 
-document.getElementById(
-"confidence"
-).innerText =
-confidence + "%";
+    /* Approximate values */
 
-document.getElementById(
-"progress"
-).style.width =
-confidence + "%";
+    const usd =
+        (amount / 86).toFixed(2);
 
-if(noteInfo[highest.className]){
+    const eur =
+        (amount / 101).toFixed(2);
 
-document.getElementById(
-"value"
-).innerText =
-noteInfo[highest.className].value;
+    const gbp =
+        (amount / 118).toFixed(2);
 
-document.getElementById(
-"color"
-).innerText =
-noteInfo[highest.className].color;
+    const aed =
+        (amount / 23.5).toFixed(2);
 
+    document.getElementById(
+        "usd"
+    ).innerText =
+        "$ " + usd;
+
+    document.getElementById(
+        "eur"
+    ).innerText =
+        "€ " + eur;
+
+    document.getElementById(
+        "gbp"
+    ).innerText =
+        "£ " + gbp;
+
+    document.getElementById(
+        "aed"
+    ).innerText =
+        "AED " + aed;
 }
 
+/* ===========================
+   Detection History
+   =========================== */
+
+function updateHistory(
+    currency
+) {
+
+    if (
+        historyData.length > 0 &&
+        historyData[0] === currency
+    ) {
+        return;
+    }
+
+    historyData.unshift(
+        currency
+    );
+
+    if (
+        historyData.length > 5
+    ) {
+
+        historyData.pop();
+    }
+
+    const historyList =
+        document.getElementById(
+            "historyList"
+        );
+
+    historyList.innerHTML = "";
+
+    historyData.forEach(
+        item => {
+
+            const li =
+                document.createElement(
+                    "li"
+                );
+
+            li.innerText =
+                item;
+
+            historyList.appendChild(
+                li
+            );
+        }
+    );
 }
 
-/* Money flow animation: dynamically create falling banknotes */
-;(function createMoneyFlow(){
-	try{
-		const count = 30;
-		const container = document.createElement('div');
-		container.id = 'money-flow';
-		document.body.appendChild(container);
-		const symbols = ['₹','₹','₹','₹','₹'];
-		for(let i=0;i<count;i++){
-			const el = document.createElement('div');
-			el.className = 'banknote';
-			el.textContent = symbols[i % symbols.length];
-			const size = Math.floor(Math.random()*28) + 14;
-			el.style.fontSize = size + 'px';
-			el.style.left = Math.random()*110 + '%';
-			el.style.opacity = (Math.random()*0.6 + 0.15).toString();
-			const dur = (Math.random()*12) + 8;
-			el.style.animation = `fall ${dur}s linear ${Math.random()*-20}s infinite`;
-			el.style.transform = `translateY(-10vh) rotate(${Math.random()*360}deg)`;
-			container.appendChild(el);
-		}
-	}catch(e){console.error('Money flow init failed', e)}
+/* ===========================
+   Voice Assistant
+   =========================== */
+
+function speakResult() {
+
+    if (
+        !currentDetectedNote
+    ) {
+
+        alert(
+            "No currency detected."
+        );
+
+        return;
+    }
+
+    const note =
+        noteInfo[
+            currentDetectedNote
+        ];
+
+    const text =
+        "Detected " +
+        note.words;
+
+    const speech =
+        new SpeechSynthesisUtterance(
+            text
+        );
+
+    speech.rate = 1;
+    speech.pitch = 1;
+
+    speechSynthesis.speak(
+        speech
+    );
+}
+
+/* ===========================
+   Money Animation
+   =========================== */
+
+(function createMoneyFlow() {
+
+    const container =
+        document.getElementById(
+            "money-flow"
+        );
+
+    if (!container) return;
+
+    const count = 35;
+
+    for (
+        let i = 0;
+        i < count;
+        i++
+    ) {
+
+        const note =
+            document.createElement(
+                "div"
+            );
+
+        note.className =
+            "banknote";
+
+        note.innerText =
+            "₹";
+
+        note.style.left =
+            Math.random() *
+            100 +
+            "%";
+
+        note.style.fontSize =
+            (
+                Math.random() *
+                25 +
+                15
+            ) + "px";
+
+        note.style.animationDuration =
+            (
+                Math.random() *
+                10 +
+                8
+            ) + "s";
+
+        note.style.animationDelay =
+            (
+                Math.random() *
+                5
+            ) + "s";
+
+        container.appendChild(
+            note
+        );
+    }
+
 })();

@@ -1,54 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MoneyLens AI</title>
+    <title>MoneyLens AI - Currency Recognition & Converter</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 </head>
 
 <body>
+
+<div id="money-flow"></div>
 
 <header>
 
     <h1>💰 MoneyLens AI</h1>
 
     <p>
-        Smart Indian Currency Recognition Using AI
+        AI Currency Recognition & Smart Converter
     </p>
 
-    <button id="startBtn" onclick="init()">
-        Start Detection
-    </button>
+    <div class="controls">
+
+        <select id="cameraSelect">
+            <option value="environment">📷 Back Camera</option>
+            <option value="user">🤳 Front Camera</option>
+        </select>
+
+        <button id="startBtn" onclick="init()">
+            Start Detection
+        </button>
+
+    </div>
 
 </header>
 
 <div class="container">
 
+    <!-- Camera Section -->
     <div class="card">
 
         <h2>📷 Live Camera Feed</h2>
 
         <div id="loading">
-            Loading AI Model...
+            🧠 Loading AI Model...
+        </div>
+
+        <div class="scan-guide">
+            Place the currency note inside the frame
         </div>
 
         <div id="webcam-container"></div>
 
     </div>
 
+    <!-- Detection Section -->
     <div class="card result-card">
 
         <h2>💵 Detection Result</h2>
@@ -73,6 +88,11 @@
             </p>
 
             <p>
+                <strong>In Words:</strong>
+                <span id="words">-</span>
+            </p>
+
+            <p>
                 <strong>Color:</strong>
                 <span id="color">-</span>
             </p>
@@ -84,13 +104,71 @@
 
         </div>
 
+        <button class="speak-btn" onclick="speakResult()">
+            🔊 Speak Result
+        </button>
+
+    </div>
+
+</div>
+
+<!-- Currency Conversion -->
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>🌍 Currency Conversion</h2>
+
+        <div class="conversion-grid">
+
+            <div class="convert-box">
+                <h3>🇺🇸 USD</h3>
+                <p id="usd">-</p>
+            </div>
+
+            <div class="convert-box">
+                <h3>🇪🇺 EUR</h3>
+                <p id="eur">-</p>
+            </div>
+
+            <div class="convert-box">
+                <h3>🇬🇧 GBP</h3>
+                <p id="gbp">-</p>
+            </div>
+
+            <div class="convert-box">
+                <h3>🇦🇪 AED</h3>
+                <p id="aed">-</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Detection History -->
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>📜 Recent Detections</h2>
+
+        <ul id="historyList">
+
+            <li>No detections yet</li>
+
+        </ul>
+
     </div>
 
 </div>
 
 <footer>
 
-   💸 MoneyLens AI • Built with Teachable Machine & TensorFlow.js
+    💸 MoneyLens AI • Powered by Teachable Machine & TensorFlow.js
 
 </footer>
 

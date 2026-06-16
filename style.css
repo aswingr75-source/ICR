@@ -1,52 +1,311 @@
-/* Money Heist theme: red & black with flowing money animation */
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+/* ===========================
+   MoneyLens AI - style.css
+   =========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
 body{
-	font-family:'Poppins',sans-serif;
-	background:linear-gradient(180deg,#1b0008 0%, #0b0406 60%);
-	color:#f7f7f7;
-	overflow-x:hidden;
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(180deg,#160006 0%,#090304 100%);
+    color:#fff;
+    min-height:100vh;
+    overflow-x:hidden;
 }
 
-/* Animated money flow container (banknotes falling) */
-#money-flow{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+/* ===========================
+   Animated Money Background
+   =========================== */
+
+#money-flow{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:0;
+}
+
 .banknote{
-	position:absolute;left:0;top:-10vh;z-index:0;color:rgba(255,255,255,0.9);
-	font-weight:800;font-size:22px;transform-origin:center;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+    position:absolute;
+    top:-100px;
+    font-size:24px;
+    font-weight:800;
+    opacity:.25;
+    animation:fall linear infinite;
 }
+
 @keyframes fall{
-	0%{transform:translateY(-10vh) rotateX(0) rotate(0);opacity:0}
-	10%{opacity:1}
-	100%{transform:translateY(120vh) rotateX(360deg) rotate(720deg);opacity:0}
+    from{
+        transform:translateY(-120px) rotate(0deg);
+    }
+    to{
+        transform:translateY(120vh) rotate(360deg);
+    }
 }
 
-/* Header */
-header{position:relative;z-index:2;padding:36px 20px;text-align:center}
-header h1{font-size:2.6rem;color:#ffdddd;text-shadow:0 4px 18px rgba(255,0,0,0.12)}
-header p{color:rgba(255,255,255,0.8);margin-top:8px}
-button{background:#b30000;border:none;padding:12px 26px;border-radius:10px;color:white;font-weight:700;cursor:pointer;box-shadow:0 10px 30px rgba(179,0,0,0.18)}
-button:hover{transform:translateY(-3px)}
+/* ===========================
+   Header
+   =========================== */
 
-.container{width:92%;max-width:1200px;margin:28px auto;display:grid;grid-template-columns:1fr 1fr;gap:22px;z-index:2;position:relative}
-.card{background:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.6));border-radius:16px;padding:22px;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
-.card h2{color:#ffdede;margin-bottom:14px}
+header{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    padding:40px 20px 20px;
+}
 
-#webcam-container{display:flex;justify-content:center;align-items:center}
-canvas{border-radius:14px;max-width:100%;box-shadow:0 0 40px rgba(179,0,0,0.12)}
+header h1{
+    font-size:3rem;
+    font-weight:800;
+    color:#ffd6d6;
+    margin-bottom:10px;
+}
 
-.result-card{text-align:center}
-#currency{font-size:68px;font-weight:800;color:#ffdddd;margin:18px 0}
+header p{
+    color:rgba(255,255,255,.8);
+    margin-bottom:25px;
+}
 
-.confidence-bar{height:18px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;margin-top:12px}
-#progress{height:100%;width:0%;background:linear-gradient(90deg,#ff3b3b,#ff9933);transition:0.45s}
-#confidence{font-size:22px;margin-top:8px;color:rgba(255,255,255,0.95)}
+.controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+}
 
-.currency-info{margin-top:20px;text-align:left}
-.currency-info p{padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+select{
+    padding:12px 16px;
+    border:none;
+    border-radius:10px;
+    font-family:inherit;
+    font-size:15px;
+    background:#fff;
+}
 
-#loading{display:none;margin-bottom:14px;font-size:16px;color:rgba(255,255,255,0.9)}
+button{
+    border:none;
+    padding:12px 24px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    font-family:inherit;
+    transition:.3s;
+}
 
-footer{position:relative;z-index:2;text-align:center;padding:18px;color:rgba(255,255,255,0.75)}
+#startBtn{
+    background:#b30000;
+    color:#fff;
+}
 
-/* Responsive */
-@media(max-width:900px){.container{grid-template-columns:1fr}.card{padding:16px}#currency{font-size:48px}header h1{font-size:1.8rem}}
+#startBtn:hover{
+    transform:translateY(-2px);
+}
+
+/* ===========================
+   Containers
+   =========================== */
+
+.container{
+    position:relative;
+    z-index:2;
+    width:92%;
+    max-width:1200px;
+    margin:20px auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.card{
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 10px 40px rgba(0,0,0,.4);
+}
+
+.card h2{
+    margin-bottom:18px;
+    color:#ffdada;
+}
+
+/* ===========================
+   Webcam
+   =========================== */
+
+#loading{
+    display:none;
+    margin-bottom:15px;
+    color:#fff;
+}
+
+.scan-guide{
+    text-align:center;
+    margin-bottom:15px;
+    color:#d9d9d9;
+    font-size:.95rem;
+}
+
+#webcam-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+#webcam-container canvas,
+#webcam-container video{
+    max-width:100%;
+    border-radius:15px;
+    border:3px solid rgba(255,255,255,.15);
+}
+
+/* ===========================
+   Detection Card
+   =========================== */
+
+.result-card{
+    text-align:center;
+}
+
+#currency{
+    font-size:4rem;
+    font-weight:800;
+    color:#ffe5e5;
+    margin:15px 0;
+}
+
+.confidence-bar{
+    width:100%;
+    height:18px;
+    border-radius:999px;
+    overflow:hidden;
+    background:rgba(255,255,255,.08);
+}
+
+#progress{
+    width:0%;
+    height:100%;
+    background:linear-gradient(
+        90deg,
+        #ff0000,
+        #ff9900
+    );
+    transition:.4s;
+}
+
+#confidence{
+    margin-top:10px;
+    font-size:1.2rem;
+}
+
+.currency-info{
+    text-align:left;
+    margin-top:20px;
+}
+
+.currency-info p{
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.speak-btn{
+    margin-top:20px;
+    background:#ff4d4d;
+    color:#fff;
+    width:100%;
+}
+
+/* ===========================
+   Currency Converter
+   =========================== */
+
+.conversion-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.convert-box{
+    background:rgba(255,255,255,.05);
+    border-radius:14px;
+    padding:18px;
+    text-align:center;
+}
+
+.convert-box h3{
+    margin-bottom:10px;
+}
+
+.convert-box p{
+    font-size:1.2rem;
+    font-weight:700;
+}
+
+/* ===========================
+   History
+   =========================== */
+
+#historyList{
+    list-style:none;
+}
+
+#historyList li{
+    padding:12px;
+    margin-bottom:8px;
+    border-radius:10px;
+    background:rgba(255,255,255,.05);
+}
+
+/* ===========================
+   Footer
+   =========================== */
+
+footer{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    padding:25px;
+    color:rgba(255,255,255,.75);
+}
+
+/* ===========================
+   Responsive
+   =========================== */
+
+@media(max-width:900px){
+
+    .container{
+        grid-template-columns:1fr;
+    }
+
+    #currency{
+        font-size:3rem;
+    }
+
+    header h1{
+        font-size:2.2rem;
+    }
+
+    .conversion-grid{
+        grid-template-columns:1fr;
+    }
+
+    .controls{
+        flex-direction:column;
+    }
+
+    select,
+    button{
+        width:100%;
+        max-width:320px;
+    }
+}
